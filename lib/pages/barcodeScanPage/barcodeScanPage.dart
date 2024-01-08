@@ -29,7 +29,7 @@ class _barcodeScan extends State<barcodeScan> {
             final List<Barcode> barcodes = capture.barcodes;
             for (final barcode in barcodes) {
               if(scanned == false){
-                Navigator.of(context).pushNamed('/product', arguments: barcode.rawValue!);
+                Navigator.of(context).pushNamed('/product', arguments: barcode.rawValue!.toString());
                 setState(() {
                   scanned = true;
                 });

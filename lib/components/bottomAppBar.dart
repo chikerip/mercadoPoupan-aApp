@@ -140,7 +140,7 @@ class _HamburgerMenu extends State<HamburgerMenu> {
                         GestureDetector(
                           onTap: () {
                             if(_localStorage.get('token') == null){
-                              Navigator.of(context).pushNamed('/register');
+                              Navigator.of(context).pushNamed('/login');
                             } else {
                               Navigator.of(context).pushNamed('/account');
                             }

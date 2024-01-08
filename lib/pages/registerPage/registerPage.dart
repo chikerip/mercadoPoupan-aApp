@@ -1,6 +1,8 @@
 // ignore_for_file: file_names, camel_case_types, unnecessary_cast
 import 'package:flutter/material.dart';
 import 'package:mercadopoupanca/components/AppAdvertsBar.dart';
+import 'package:mercadopoupanca/pages/registerPage/models/post.dart';
+import 'package:mercadopoupanca/pages/registerPage/services/remote_services.dart';
 
 class registerPage extends StatefulWidget {
   const registerPage({super.key});
@@ -10,9 +12,28 @@ class registerPage extends StatefulWidget {
 }
 
 class _registerPage extends State<registerPage> {
+  List<Post>? posts;
   String username = '';
   String email = '';
   String password = '';
+  bool send = false;
+
+  getData(body)async{
+    posts = await RemoteServicesRegister().getPosts('http://192.168.137.1:8080/user', body);
+      
+
+    if(posts != null){
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushNamed('/login');
+    } else {
+        // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+              content: Text("Falha ao registar utilizador"),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +41,7 @@ class _registerPage extends State<registerPage> {
     double screenheight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
+      body: Column(
           children: [
             const AppAdvertsBar(),
             Expanded(
@@ -191,42 +211,49 @@ class _registerPage extends State<registerPage> {
                         ),
                       ),
 
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushNamed('/login');
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.fromLTRB(0, screenheight * 0.08, 0, 0),
-                          width: screenWidth * 0.4,
-                          height: screenheight * 0.08,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffF5A636),
-                            borderRadius: BorderRadius.circular(50),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.grey,
-                                    spreadRadius: 5,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3), // changes position of shadow
-                                  ),
-                                ],
+                      Visibility(
+                        visible: send,
+                        replacement: GestureDetector(
+                          onTap: () {
+                            //Navigator.of(context).pushNamed('/login');
+                            setState(() {
+                              send = true;
+                            });
+                            getData({"name": username, "email": email, "password": password});
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.08, 0, 0),
+                            width: screenWidth * 0.4,
+                            height: screenheight * 0.08,
+                            decoration: BoxDecoration(
+                              color: const Color(0xffF5A636),
+                              borderRadius: BorderRadius.circular(50),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      spreadRadius: 5,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                            ),
+                            child: const Text('REGISTAR',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold
+                            ),),
                           ),
-                          child: const Text('REGISTAR',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold
-                          ),),
                         ),
+                        child: const Center(child: CircularProgressIndicator(),)
                       )
                     ]
                   )
                 )
               )         
-              )
+            )
           ],
         ),
-      )
     );
   }
 }

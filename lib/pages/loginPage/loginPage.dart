@@ -1,6 +1,9 @@
 // ignore_for_file: file_names, camel_case_types, unnecessary_cast
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/components/AppAdvertsBar.dart';
+import 'package:mercadopoupanca/pages/loginPage/models/post.dart';
+import 'package:mercadopoupanca/pages/loginPage/services/remote_services.dart';
 
 class loginPage extends StatefulWidget {
   const loginPage({super.key});
@@ -10,8 +13,33 @@ class loginPage extends StatefulWidget {
 }
 
 class _loginPage extends State<loginPage> {
+  final _localStorage = Hive.box('localStorage');
   String email = '';
   String password = '';
+  List<Post>? posts;
+  bool send = false;
+
+  getData(body)async{
+    posts = await RemoteServicesLogin().getPosts('http://192.168.137.1:8080/user?type=login', body);
+      
+
+    if(posts != null){
+        // ignore: use_build_context_synchronously
+        _localStorage.put('token', posts![0].token);
+        _localStorage.put('admin', posts![0].admin);
+        Navigator.of(context).pushNamed('/account');
+    } else {
+        // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+              content: Text("Falha ao dar login"),
+      ));
+      setState(() {
+        send = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,33 +189,40 @@ class _loginPage extends State<loginPage> {
                         ),
                       ),
 
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushNamed('/account');
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.fromLTRB(0, screenheight * 0.08, 0, 0),
-                          width: screenWidth * 0.4,
-                          height: screenheight * 0.08,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffF5A636),
-                            borderRadius: BorderRadius.circular(50),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.grey,
-                                    spreadRadius: 5,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3), // changes position of shadow
-                                  ),
-                                ],
+                      Visibility(
+                        visible: send,
+                        replacement: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                send = true;
+                              });
+                              getData({"email": email, "password": password});
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.fromLTRB(0, screenheight * 0.08, 0, 0),
+                              width: screenWidth * 0.4,
+                              height: screenheight * 0.08,
+                              decoration: BoxDecoration(
+                                color: const Color(0xffF5A636),
+                                borderRadius: BorderRadius.circular(50),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        spreadRadius: 5,
+                                        blurRadius: 6,
+                                        offset: Offset(0, 3), // changes position of shadow
+                                      ),
+                                    ],
+                              ),
+                              child: const Text('LOGIN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold
+                              ),),
+                            ),
                           ),
-                          child: const Text('LOGIN',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold
-                          ),),
-                        ),
+                        child: Center(child: CircularProgressIndicator(),)
                       )
                     ]
                   )

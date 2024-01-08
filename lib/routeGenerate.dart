@@ -31,7 +31,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_)=> const filterPage());
 
       case '/product':
-        return MaterialPageRoute(builder: (_)=>const productsPage());
+        if(args is String){
+          return MaterialPageRoute(builder: (_) => productsPage(data: args.toString()));
+        } else {
+          return _errorRoute();
+        }
       
       case '/catalog':
         return MaterialPageRoute(builder: (_)=> const catalogPage());

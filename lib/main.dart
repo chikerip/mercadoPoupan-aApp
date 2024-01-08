@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.montserrat().fontFamily,
       ),
       title: 'Mercado Poupança',
-      initialRoute: '/account',
+      initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }

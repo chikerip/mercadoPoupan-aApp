@@ -1,20 +1,43 @@
 // ignore_for_file: file_names, camel_case_types, unnecessary_cast
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/components/AppAdvertsBar.dart';
+import 'package:mercadopoupanca/pages/homePage/models/post.dart';
+import 'package:mercadopoupanca/pages/homePage/services/remote_services.dart';
 
 class productsPage extends StatefulWidget {
-  const productsPage({super.key});
+  final String data;
+  const productsPage({Key? key,
+  required this.data,
+  }) : super(key: key);
 
   @override
   State<productsPage> createState() => _productsPage();
 }
 
 class _productsPage extends State<productsPage> {
+  final _localStorage = Hive.box('localStorage');
+  List<Post>? posts;
+  List<Post>? oldPost;
+  bool isLoaded = false;
 
+  void getData(productRef) async{
+    posts = await RemoteServices().getPosts('http://192.168.137.1:8080/product?type=barcode', {"productRef": productRef});
+
+      if(posts != null){
+        setState(() {
+          oldPost = posts;
+          isLoaded = true;
+        });
+      }
+  }
+  
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenheight = MediaQuery.of(context).size.height;
+    String product = widget.data;
+    getData(product);
 
     return Scaffold(
       body: Column(
@@ -67,110 +90,115 @@ class _productsPage extends State<productsPage> {
                     ),
                   ),
   
-                  Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)
-                        ),
-                        width: screenWidth * 0.92,
-                        height: screenheight * 0.7,
-                      ),
-                      
-                      Positioned(
-                        top: 0,
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: screenWidth * 0.92,
-                          height: screenheight * 0.4,
+                  Visibility(
+                    replacement: const Center(child: CircularProgressIndicator(),),
+                    visible: isLoaded,
+                    child: Stack(
+                      children: [
+                        Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0xffD9D9D9),
-                                spreadRadius: 5,
-                                blurRadius: 6,
-                                offset: Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
+                            borderRadius: BorderRadius.circular(10)
                           ),
-                        child: Image.network(
-                          'https://firebasestorage.googleapis.com/v0/b/mercadopoupanca-2aac2.appspot.com/o/products%2FdefaultImg.png?alt=media&token=87a9d1d0-0c2a-49e1-a955-b62fc63636e3',
-                          width: screenWidth * 0.90,
-                          height: screenheight * 0.35,
+                          width: screenWidth * 0.92,
+                          height: screenheight * 0.7,
+                        ),
+                        
+                        Positioned(
+                          top: 0,
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: screenWidth * 0.92,
+                            height: screenheight * 0.4,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0xffD9D9D9),
+                                  spreadRadius: 5,
+                                  blurRadius: 6,
+                                  offset: Offset(0, 3), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                          child: Image.network(
+                            '${oldPost?[0].image}',
+                            width: screenWidth * 0.90,
+                            height: screenheight * 0.35,
+                            ),
                           ),
                         ),
-                      ),
-                    
-                      Positioned(
-                        bottom: 0,
-                        child: SizedBox(
-                          width: screenWidth * 0.92,
-                          height: screenheight * 0.45,
-                          child:  Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                child: const Text(
-                                  'Banana com maionese',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold
+                      
+                        Positioned(
+                          bottom: 0,
+                          child: SizedBox(
+                            width: screenWidth * 0.92,
+                            height: screenheight * 0.45,
+                            child:  Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                  child: Text(
+                                    '${oldPost?[0].name}',
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold
+                                    ),
                                   ),
                                 ),
-                              ),
-                              
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(5, 5, 5, 3),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      '1.99€',
-                                      style: TextStyle(
-                                        color: const Color(0xffF5A636),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: (screenWidth / screenheight) * 40
+                                
+                                Container(
+                                  padding: const EdgeInsets.fromLTRB(5, 5, 5, 3),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '1.99€',
+                                        style: TextStyle(
+                                          color: const Color(0xffF5A636),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: (screenWidth / screenheight) * 40
+                                          ),
                                         ),
-                                      ),
-                                    Stack(
-                                      children: [
-                                        Visibility(
-                                          visible: true,
-                                          child: Text(
-                                            '2.99€',
+                                      Stack(
+                                        children: [
+                                          Visibility(
+                                            visible: true,
+                                            child: Text(
+                                              '2.99€',
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: (screenWidth / screenheight) * 40
+                                                ),
+                                              ),
+                                            ),
+                                            Positioned(
+                                            bottom: screenheight * 0.005,
+                                            child: Text(
+                                            '_______',
                                             style: TextStyle(
                                               color: Colors.grey,
-                                              fontSize: (screenWidth / screenheight) * 40
+                                              fontSize: (screenWidth / screenheight) * 25
                                               ),
                                             ),
                                           ),
-                                          Positioned(
-                                          bottom: screenheight * 0.005,
-                                          child: Text(
-                                          '_______',
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: (screenWidth / screenheight) * 25
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            
                               
-                            ],
-                          ) 
-                        ),
-                      )
-                    ],
+                                
+                              ],
+                            ) 
+                          ),
+                        )
+                      ],
+                    ),
+                
                   ),
                 ],
               )
