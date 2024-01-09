@@ -80,7 +80,7 @@ class _accountPage extends State<accountPage> {
 
 
   getData(token)async{
-    apiPost = await RemoteServicesAccount().getPosts('http://192.168.137.1:8080/user?type=userInfo', token);
+    apiPost = await RemoteServicesAccount().getPosts('http://192.168.180.23:8080/user?type=userInfo', token);
       
     if(apiPost != null){
         setState(() {
@@ -101,7 +101,7 @@ class _accountPage extends State<accountPage> {
   }
 
   postData(body) async{
-    final result = await RemoteServicesAccount().postData('http://192.168.137.1:8080/user?type=adress', _localStorage.get('token'), body);
+    final result = await RemoteServicesAccount().postData('http://192.168.180.23:8080/user?type=adress', _localStorage.get('token'), body);
   
     if(result != null){
       showDialog(

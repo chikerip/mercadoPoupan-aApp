@@ -19,7 +19,7 @@ class _registerPage extends State<registerPage> {
   bool send = false;
 
   getData(body)async{
-    posts = await RemoteServicesRegister().getPosts('http://192.168.137.1:8080/user', body);
+    posts = await RemoteServicesRegister().getPosts('http://192.168.180.23:8080/user', body);
       
 
     if(posts != null){

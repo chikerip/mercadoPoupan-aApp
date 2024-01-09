@@ -22,7 +22,7 @@ class _productsPage extends State<productsPage> {
   bool isLoaded = false;
 
   void getData(productRef) async{
-    posts = await RemoteServices().getPosts('http://192.168.137.1:8080/product?type=barcode', {"productRef": productRef});
+    posts = await RemoteServices().getPosts('http://192.168.180.23:8080/product?type=barcode', {"productRef": productRef});
 
       if(posts != null){
         setState(() {

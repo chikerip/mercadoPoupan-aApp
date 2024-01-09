@@ -33,7 +33,7 @@ class _settingsPage extends State<settingsPage> {
   }
 
   postData(body) async{
-    final result = await RemoteServicesSettings().postDB('http://192.168.137.1:8080/user?type=password', _localStorage.get('token'), body);
+    final result = await RemoteServicesSettings().postDB('http://192.168.180.23:8080/user?type=password', _localStorage.get('token'), body);
 
     if(result != null){
       showDialog(

@@ -82,10 +82,10 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
       Timer.periodic(const Duration(seconds: 1), (timer) {
         switch(_localStorage.get('searchStatus')){
           case false:
-            getData('http://192.168.137.1:8080/product?type=all', null);
+            getData('http://192.168.180.23:8080/product?type=all', null);
             _localStorage.put('searchStatus', null);
           case true:
-            getData('http://192.168.137.1:8080/product?type=name', _localStorage.get('search'));
+            getData('http://192.168.180.23:8080/product?type=name', _localStorage.get('search'));
             _localStorage.put('searchStatus', null);
           case 'cancel':
             timer.cancel();
