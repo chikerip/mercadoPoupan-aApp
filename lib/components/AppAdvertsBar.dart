@@ -19,7 +19,7 @@ class _AppAdvertsBar extends State<AppAdvertsBar> {
 
   @override
   void initState () {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+    SystemChrome.setEnabledSystemUIMode (SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
   ]);

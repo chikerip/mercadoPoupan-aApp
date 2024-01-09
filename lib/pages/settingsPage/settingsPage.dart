@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/components/AppAdvertsBar.dart';
+import 'package:mercadopoupanca/pages/settingsPage/services/remote_services.dart';
 
 class settingsPage extends StatefulWidget {
   const settingsPage({super.key});
@@ -13,8 +14,9 @@ class settingsPage extends StatefulWidget {
 class _settingsPage extends State<settingsPage> {
   final _localStorage = Hive.box('localStorage');
   bool asc = false;
-  
   bool des = false;
+  String oldPassword = '';
+  String newPassword = '';
 
   void initState(){
     super.initState();
@@ -30,6 +32,31 @@ class _settingsPage extends State<settingsPage> {
     }
   }
 
+  postData(body) async{
+    final result = await RemoteServicesSettings().postDB('http://192.168.137.1:8080/user?type=password', _localStorage.get('token'), body);
+
+    if(result != null){
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+              content: Text("Sua palavra password foi atualizada"),
+      ));
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+              content: Text("erro ao atualizar a password"),
+      ));
+    }
+  }
+
+  hamburgerChange(){
+    showDialog(
+      context: context,
+        builder: (context) => const AlertDialog(
+        content: Text("Renicie a app para aplicar as alterações"),
+    ));
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -39,11 +66,15 @@ class _settingsPage extends State<settingsPage> {
       body: Column(
         children: [
           const AppAdvertsBar(),
-          Container(
+          Expanded(
+            child: Container(
             color: Color(0xffD9D9D9),
             height: screenheight * 0.93,
             width: screenWidth,
-            child: Container(
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: [
+                Container(
               child: Column(
                 children: [
                   Container(
@@ -116,8 +147,8 @@ class _settingsPage extends State<settingsPage> {
                               boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.5),
-                                        spreadRadius: 5,
-                                        blurRadius: 9,
+                                        spreadRadius: 3,
+                                        blurRadius: 3,
                                         offset: Offset(0, 3), // changes position of shadow
                                       ),
                                     ],
@@ -172,7 +203,7 @@ class _settingsPage extends State<settingsPage> {
                             }
                           },
                           child: Container(
-                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.01, 0, 0),
+                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.02, 0, 0),
                             width: screenWidth * 0.9,
                             height: screenheight * 0.07,
                             decoration: BoxDecoration(
@@ -181,8 +212,8 @@ class _settingsPage extends State<settingsPage> {
                               boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.5),
-                                        spreadRadius: 5,
-                                        blurRadius: 9,
+                                        spreadRadius: 3,
+                                        blurRadius: 3,
                                         offset: Offset(0, 3), // changes position of shadow
                                       ),
                                     ],
@@ -225,9 +256,94 @@ class _settingsPage extends State<settingsPage> {
                       ],
                     ),
                   ),
+                  
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, screenheight * 0.03, 0, 0),
+                    width: screenWidth * 0.9,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Alterar password'),
+                        
+                        Container(
+                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.01, 0, 0),
+                            padding: EdgeInsets.fromLTRB(screenWidth * 0.03, 0, 0, 0),
+                            alignment: Alignment.centerLeft,
+                            width: screenWidth * 0.9,
+                            height: screenheight * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.5),
+                                        spreadRadius: 3,
+                                        blurRadius: 3,
+                                        offset: Offset(0, 3), // changes position of shadow
+                                      ),
+                                    ],
+                            ),
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Password antiga',
+                              ),
+                              onChanged: (text) {
+                                setState(() {
+                                  oldPassword = text;
+                                });
+                              }
+                            ),
+                        ),
+
+                        Container(
+                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.02, 0, 0),
+                            padding: EdgeInsets.fromLTRB(screenWidth * 0.03, 0, 0, 0),
+                            alignment: Alignment.centerLeft,
+                            width: screenWidth * 0.9,
+                            height: screenheight * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.5),
+                                        spreadRadius: 3,
+                                        blurRadius: 3,
+                                        offset: Offset(0, 3), // changes position of shadow
+                                      ),
+                                    ],
+                            ),
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Password nova',
+                              ),
+                              onChanged: (text) {
+                                setState(() {
+                                  newPassword = text;
+                                });
+                              }
+                            ),
+                        ),
+                      
+                      ],
+                    ),
+                  ),
+                  
+
                   GestureDetector(
                     onTap: () {
-                        Navigator.pop(context);
+                        if(oldPassword == '' && newPassword == ''){
+                          Navigator.pop(context);
+                          hamburgerChange();
+                        } else {
+                          final obj = {
+                            "password": oldPassword,
+                            "newPassword": newPassword
+                          };
+                          postData(obj);
+                        }
                     },
                     child: Container(
                       alignment: Alignment.center,
@@ -250,7 +366,11 @@ class _settingsPage extends State<settingsPage> {
                 ],
               ),
             )
+              ],
+            )
           )
+        
+          ),
         ],
       ),
     );

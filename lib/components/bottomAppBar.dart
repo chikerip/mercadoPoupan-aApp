@@ -109,7 +109,7 @@ class _HamburgerMenu extends State<HamburgerMenu> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed('/');
+                            Navigator.of(context).pushReplacementNamed('/');
                           },
                           child: const Icon(
                             Icons.home,
@@ -119,7 +119,8 @@ class _HamburgerMenu extends State<HamburgerMenu> {
 
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed('/catalog');
+                            _localStorage.put('searchStatus', 'cancel');
+                            Navigator.of(context).pushReplacementNamed('/catalog');
                           },
                           child: const Icon(
                             Icons.list,
@@ -129,7 +130,8 @@ class _HamburgerMenu extends State<HamburgerMenu> {
 
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed('/cart');
+                            _localStorage.put('searchStatus', 'cancel');
+                            Navigator.of(context).pushReplacementNamed('/cart');
                           },
                           child: const Icon(
                             Icons.shopping_bag,
@@ -139,10 +141,11 @@ class _HamburgerMenu extends State<HamburgerMenu> {
 
                         GestureDetector(
                           onTap: () {
+                            _localStorage.put('searchStatus', 'cancel');
                             if(_localStorage.get('token') == null){
                               Navigator.of(context).pushNamed('/login');
                             } else {
-                              Navigator.of(context).pushNamed('/account');
+                              Navigator.of(context).pushReplacementNamed('/account');
                             }
                           },
                           child: const Icon(

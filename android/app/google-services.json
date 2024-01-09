@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "716210582245",
+    "project_id": "mercadopoupanca-2aac2",
+    "storage_bucket": "mercadopoupanca-2aac2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716210582245:android:0879247f89f580a4061a0c",
+        "android_client_info": {
+          "package_name": "com.example.mercadopoupanca"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbhDYDcTbLyU6J7y2qr5p3qdvMfQLjzqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

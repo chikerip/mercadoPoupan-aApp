@@ -262,12 +262,9 @@ class _filterPage extends State<filterPage> {
                                   ),
                                 ),
                               
-                                const Text(
-                                  'Mercadona',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  )
+                                Image.network('https://firebasestorage.googleapis.com/v0/b/mercadopoupanca-2aac2.appspot.com/o/stores%2Fmercadona.png?alt=media&token=8312a14c-a01c-46dd-883c-cb1175c776c9',
+                                  width: screenWidth * 0.4,
+                                  height: screenheight * 0.04,)
                               ],
                             ),
                           ),
@@ -319,12 +316,9 @@ class _filterPage extends State<filterPage> {
                                   ),
                                 ),
                               
-                                const Text(
-                                  'Aldi',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  )
+                                Image.network('https://firebasestorage.googleapis.com/v0/b/mercadopoupanca-2aac2.appspot.com/o/stores%2Fmercadona.png?alt=media&token=8312a14c-a01c-46dd-883c-cb1175c776c9',
+                                  width: screenWidth * 0.4,
+                                  height: screenheight * 0.04,)
                               ],
                             ),
                           ),

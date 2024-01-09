@@ -11,15 +11,35 @@ class RemoteServicesAccount{
       // ignore: unnecessary_brace_in_string_interps
       'Authorization': 'Bearer ${token}'
     };
-    var request = http.Request('GET', Uri.parse('http://192.168.137.1:8080/user?type=userInfo'));
+    var request = http.Request('GET', Uri.parse(url));
     request.body = '''''';
+    request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var json = await response.stream.bytesToString();
+        return postFromJson(json);
+      } else {
+        return null;
+      }
+  }
+
+  Future postData(url, token, body)async{
+    var headers = {
+      'Content-Type': 'application/json',
+      // ignore: unnecessary_brace_in_string_interps
+      'Authorization': 'Bearer ${token}'
+    };
+    var request = http.Request('PUT', Uri.parse(url));
+    request.body = json.encode(body);
     request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
 
       if (response.statusCode == 200) {
         var json = await response.stream.bytesToString();
-        return postFromJson(json);
+        return json;
       } else {
         return null;
       }

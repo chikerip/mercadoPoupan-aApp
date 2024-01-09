@@ -78,19 +78,19 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
   void initState(){
 
     super.initState();
-    _localStorage.put('searchStatus', false);
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      switch(_localStorage.get('searchStatus')){
-        case false:
-          getData('http://192.168.137.1:8080/product?type=all', null);
-          _localStorage.put('searchStatus', null);
-        case true:
-          getData('http://192.168.137.1:8080/product?type=name', _localStorage.get('search'));
-          _localStorage.put('searchStatus', null);
-        case 'cancel':
-          timer.cancel();
-      }
-    });
+      _localStorage.put('searchStatus', false);
+      Timer.periodic(const Duration(seconds: 1), (timer) {
+        switch(_localStorage.get('searchStatus')){
+          case false:
+            getData('http://192.168.137.1:8080/product?type=all', null);
+            _localStorage.put('searchStatus', null);
+          case true:
+            getData('http://192.168.137.1:8080/product?type=name', _localStorage.get('search'));
+            _localStorage.put('searchStatus', null);
+          case 'cancel':
+            timer.cancel();
+        }
+      });
   }
 
   getData(url, body) async{
@@ -302,6 +302,7 @@ class _AppSeachBar extends State<AppSeachBar>{
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
+              padding: EdgeInsets.fromLTRB(screenWidth * 0.02, 0, screenWidth * 0.02, 0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: Colors.white

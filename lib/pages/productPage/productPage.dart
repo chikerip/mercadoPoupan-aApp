@@ -77,7 +77,7 @@ class _productsPage extends State<productsPage> {
                           width: screenWidth * 0.1,
                           height: screenheight * 0.1,
                           child: Visibility(
-                            visible: false,
+                            visible: (_localStorage.get('admin') == 1),
                             child: IconButton(
                               onPressed: () => {
                                 Navigator.of(context).pushNamed('/')

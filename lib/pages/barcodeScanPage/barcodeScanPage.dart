@@ -119,7 +119,7 @@ class _barcodeScan extends State<barcodeScan> {
           children: [
             IconButton(
               onPressed: () => {
-                Navigator.of(context).pushNamed('/')
+                Navigator.pop(context)
               }, 
               icon: Icon(Icons.arrow_back_ios)
             ),
