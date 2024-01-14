@@ -20,6 +20,7 @@ class RemoteServicesRegister{
         var json = await response.stream.bytesToString();
         return postFromJson(json);
       } else {
+        var json = await response.stream.bytesToString();
         return null;
       }
   }

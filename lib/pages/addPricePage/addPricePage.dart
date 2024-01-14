@@ -1,66 +1,72 @@
 // ignore_for_file: file_names, camel_case_types, unnecessary_cast
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/components/AppAdvertsBar.dart';
-import 'package:mercadopoupanca/pages/settingsPage/services/remote_services.dart';
+import 'package:mercadopoupanca/pages/addPricePage/services/remote_services.dart';
 
-class settingsPage extends StatefulWidget {
-  const settingsPage({super.key});
+class addPricePage extends StatefulWidget {
+  final List<dynamic> data;
+  const addPricePage({Key? key,
+  required this.data,
+  }) : super(key: key);
 
   @override
-  State<settingsPage> createState() => _settingsPage();
+  State<addPricePage> createState() => _addPricePage();
 }
 
-class _settingsPage extends State<settingsPage> {
+class _addPricePage extends State<addPricePage> {
   final _localStorage = Hive.box('localStorage');
-  bool asc = false;
-  bool des = false;
-  String oldPassword = '';
-  String newPassword = '';
-
-  void initState(){
-    super.initState();
-
-    if(_localStorage.get('hamburgerDirection') == true){
-      setState(() {
-        asc = true;
-      });
-    } else {
-      setState(() {
-        des = true;
-      });
-    }
-  }
+  int productRef = 0;
+  double price = 0.00;
+  String productName = '';
+  String productImage = '';
+  int promo = 0;
 
   postData(body) async{
-    final result = await RemoteServicesSettings().postDB('${_localStorage.get('urlApi')}/user?type=password', _localStorage.get('token'), body);
+    final result = await RemoteServicesAddPrice().postDB('${_localStorage.get('urlApi')}/product', _localStorage.get('token'), body);
 
     if(result != null){
+      _localStorage.put('backProduct', true);
+      Navigator.of(context).pushReplacementNamed('/product', arguments: productRef.toString());
       showDialog(
         context: context,
         builder: (context) => const AlertDialog(
-              content: Text("Sua palavra password foi atualizada"),
+              content: Text("Preço criado"),
       ));
     } else {
       showDialog(
         context: context,
         builder: (context) => const AlertDialog(
-              content: Text("erro ao atualizar a password"),
+              content: Text("erro ao criar produto"),
       ));
     }
   }
-
-  hamburgerChange(){
+  
+  invalidParams(){
     showDialog(
-      context: context,
+        context: context,
         builder: (context) => const AlertDialog(
-        content: Text("Renicie a app para aplicar as alterações"),
-    ));
+              content: Text("Algum parametro foi mal preenchido"),
+      ));
   }
+
+  putValuesInVar(listProduct){
+    setState(() {
+      productRef = listProduct[0];
+      productName = listProduct[1];
+      productImage = listProduct[2];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenheight = MediaQuery.of(context).size.height;
+    putValuesInVar(widget.data);
 
     return Scaffold(
       body: Column(
@@ -68,15 +74,15 @@ class _settingsPage extends State<settingsPage> {
           const AppAdvertsBar(),
           Expanded(
             child: Container(
-            color: Color(0xffD9D9D9),
+            color: const Color(0xffD9D9D9),
             height: screenheight * 0.93,
             width: screenWidth,
             child: ListView(
               scrollDirection: Axis.vertical,
               children: [
-                Container(
-              child: Column(
-                children: [
+                Column(
+                  children: [
+
                   Container(
                     width: screenWidth * 0.92,
                     height: screenheight * 0.1,
@@ -92,7 +98,7 @@ class _settingsPage extends State<settingsPage> {
                         ),
                       
                         const Text(
-                          'Definições',
+                          'Adicionar preço',
                           style: TextStyle(
                             fontWeight: FontWeight.bold
                           ),
@@ -114,31 +120,31 @@ class _settingsPage extends State<settingsPage> {
                       ],
                     ),
                   ),
-  
+                  
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, screenheight * 0.01, 0, 0),
+                    alignment: Alignment.center,
+                    height: 150,
+                    width: 150,
+                    child: Image.network(
+                            productImage,
+                            fit: BoxFit.cover,
+                            width: 150,
+                            height: 150,
+                        ),
+                  ),
+          
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, screenheight * 0.03, 0, 0),
                     width: screenWidth * 0.9,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Orientação do Menu'),
+                        const Text('Codigo de barras'),
                         
-                        GestureDetector(
-                          onTap:() {
-                            if(des == true){
-                              setState(() {
-                                des = !des;
-                              });
-                            }
-                            if(asc != true){
-                              setState(() {
-                                _localStorage.put('hamburgerDirection', true);
-                                asc = !asc;
-                              });
-                            }
-                          },
-                          child: Container(
+                        Container(
                             margin: EdgeInsets.fromLTRB(0, screenheight * 0.01, 0, 0),
+                            padding: EdgeInsets.fromLTRB(screenWidth * 0.03, 0, 0, 0),
+                            alignment: Alignment.centerLeft,
                             width: screenWidth * 0.9,
                             height: screenheight * 0.07,
                             decoration: BoxDecoration(
@@ -153,106 +159,8 @@ class _settingsPage extends State<settingsPage> {
                                       ),
                                     ],
                             ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.fromLTRB(screenWidth * 0.04, 0, screenWidth * 0.04, 0),
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    border: Border.all(
-                                      color: const Color(0xffF5A636),
-                                      width: 3
-                                    ),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: asc ? const Color(0xffF5A636) : Colors.white,
-                                      borderRadius: BorderRadius.circular(50)
-                                    ),
-                                    width: 10,
-                                    height: 10,
-                                  ),
-                                ),
-                              
-                                const Text(
-                                  'Destro',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  )
-                              ],
-                            ),
-                          ),
+                            child: Text(productRef.toString(),)
                         ),
-                      
-                        GestureDetector(
-                          onTap:() {
-                            if(asc == true){
-                              setState(() {
-                                asc = !asc;
-                              });
-                            }
-                            if(des != true){
-                              setState(() {
-                                _localStorage.put('hamburgerDirection', false);
-                                des = !des;
-                              });
-                            }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.02, 0, 0),
-                            width: screenWidth * 0.9,
-                            height: screenheight * 0.07,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.5),
-                                        spreadRadius: 3,
-                                        blurRadius: 3,
-                                        offset: Offset(0, 3), // changes position of shadow
-                                      ),
-                                    ],
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.fromLTRB(screenWidth * 0.04, 0, screenWidth * 0.04, 0),
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    border: Border.all(
-                                      color: const Color(0xffF5A636),
-                                      width: 3
-                                    ),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: des ? const Color(0xffF5A636) : Colors.white,
-                                      borderRadius: BorderRadius.circular(50)
-                                    ),
-                                    width: 10,
-                                    height: 10,
-                                  ),
-                                ),
-                              
-                                const Text(
-                                  'Esquerdino',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  )
-                              ],
-                            ),
-                          ),
-                        ),
-                      
                       ],
                     ),
                   ),
@@ -263,7 +171,39 @@ class _settingsPage extends State<settingsPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Alterar password'),
+                        const Text('Nome do produto'),
+                        
+                        Container(
+                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.01, 0, 0),
+                            padding: EdgeInsets.fromLTRB(screenWidth * 0.03, 0, 0, 0),
+                            alignment: Alignment.centerLeft,
+                            width: screenWidth * 0.9,
+                            height: screenheight * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.5),
+                                        spreadRadius: 3,
+                                        blurRadius: 3,
+                                        offset: Offset(0, 3), // changes position of shadow
+                                      ),
+                                    ],
+                            ),
+                            child: Text(productName.toString(),)
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, screenheight * 0.03, 0, 0),
+                    width: screenWidth * 0.9,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Preço do produto'),
                         
                         Container(
                             margin: EdgeInsets.fromLTRB(0, screenheight * 0.01, 0, 0),
@@ -284,20 +224,31 @@ class _settingsPage extends State<settingsPage> {
                                     ],
                             ),
                             child: TextField(
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'Password antiga',
+                                hintText: 'x.xx',
                               ),
                               onChanged: (text) {
                                 setState(() {
-                                  oldPassword = text;
+                                  price = double.parse(text);
                                 });
                               }
                             ),
                         ),
-
+                      ],
+                    ),
+                  ),
+                  
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, screenheight * 0.03, 0, 0),
+                    width: screenWidth * 0.9,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Promoção do produto'),
+                        
                         Container(
-                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.02, 0, 0),
+                            margin: EdgeInsets.fromLTRB(0, screenheight * 0.01, 0, 0),
                             padding: EdgeInsets.fromLTRB(screenWidth * 0.03, 0, 0, 0),
                             alignment: Alignment.centerLeft,
                             width: screenWidth * 0.9,
@@ -315,39 +266,44 @@ class _settingsPage extends State<settingsPage> {
                                     ],
                             ),
                             child: TextField(
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'Password nova',
+                                hintText: 'Insira caso tenha (numero inteiro sem %)',
                               ),
                               onChanged: (text) {
                                 setState(() {
-                                  newPassword = text;
+                                  if(text == ''){
+                                    promo = 0;
+                                  } else {
+                                    promo = int.parse(text);
+                                  }
                                 });
                               }
                             ),
                         ),
-                      
                       ],
                     ),
                   ),
                   
-
                   GestureDetector(
                     onTap: () {
-                        if(oldPassword == '' && newPassword == ''){
-                          Navigator.pop(context);
-                          hamburgerChange();
+                        if(productImage == '' || productName == '' || price == 0.00 || productRef == 0){
+                          invalidParams();
                         } else {
+
                           final obj = {
-                            "password": oldPassword,
-                            "newPassword": newPassword
+                            "productRef": productRef,
+                            "productImage": productImage,
+                            "productName": productName,
+                            "price": price,
+                            "promo": promo
                           };
                           postData(obj);
                         }
                     },
                     child: Container(
                       alignment: Alignment.center,
-                      margin: EdgeInsets.fromLTRB(0, screenheight * 0.05, 0, 0),
+                      margin: EdgeInsets.fromLTRB(0, screenheight * 0.05, 0, screenheight * 0.05),
                       width: screenWidth * 0.4,
                       height: screenheight * 0.08,
                       decoration: BoxDecoration(
@@ -365,8 +321,7 @@ class _settingsPage extends State<settingsPage> {
                   )
                 ],
               ),
-            )
-              ],
+            ],
             )
           )
         

@@ -218,22 +218,22 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
     Timer.periodic(const Duration(seconds: 1), (timer) {
       switch(_localStorage.get('catalogStatus')){
         case 'all':
-          getData('http://192.168.180.23:8080/catalog?market=all', null);
+          getData('${_localStorage.get('urlApi')}/catalog?market=all', null);
           _localStorage.put('catalogStatus', null);
         case 'pingoDoce':
-          getData('http://192.168.180.23:8080/catalog?market=Pingo Doce', null);
+          getData('${_localStorage.get('urlApi')}/catalog?market=Pingo Doce', null);
           _localStorage.put('catalogStatus', null);
         case 'mercadona':
-          getData('http://192.168.180.23:8080/catalog?market=Mercadona', null);
+          getData('${_localStorage.get('urlApi')}/catalog?market=Mercadona', null);
           _localStorage.put('catalogStatus', null);
         case 'lidl':
-          getData('http://192.168.180.23:8080/catalog?market=Lidl', null);
+          getData('${_localStorage.get('urlApi')}/catalog?market=Lidl', null);
           _localStorage.put('catalogStatus', null);
         case 'continente':
-          getData('http://192.168.180.23:8080/catalog?market=Continente', null);
+          getData('${_localStorage.get('urlApi')}/catalog?market=Continente', null);
           _localStorage.put('catalogStatus', null);
         case 'aldi':
-          getData('http://192.168.180.23:8080/catalog?market=Aldi', null);
+          getData('${_localStorage.get('urlApi')}/catalog?market=Aldi', null);
           _localStorage.put('catalogStatus', null);
         case 'cancel':
           timer.cancel();
@@ -326,30 +326,30 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
                                         fontSize: (screenWidth / screenheight) * 40
                                         ),
                                       ),
-                                    Stack(
-                                      children: [
-                                        Visibility(
-                                          visible: (oldPost![index].market[0].promo > 0),
-                                          child: Text(
-                                            '${((oldPost?[index].market[0].price)! + (oldPost![index].market[0].price * (oldPost![index].market[0].promo / 100))).toStringAsFixed(2)}€',
+                                    Visibility(
+                                      visible: (oldPost![index].market[0].promo > 0),
+                                      child: Stack(
+                                        children: [
+                                          Text(
+                                              '${((oldPost?[index].market[0].price)! + (oldPost![index].market[0].price * (oldPost![index].market[0].promo / 100))).toStringAsFixed(2)}€',
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: (screenWidth / screenheight) * 25
+                                                ),
+                                              ),
+                                            Positioned(
+                                            bottom: screenheight * 0.005,
+                                            child: Text(
+                                            '_______',
                                             style: TextStyle(
                                               color: Colors.grey,
                                               fontSize: (screenWidth / screenheight) * 25
                                               ),
                                             ),
                                           ),
-                                          Positioned(
-                                          bottom: screenheight * 0.005,
-                                          child: Text(
-                                          '_______',
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: (screenWidth / screenheight) * 25
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
+                                        ],
+                                      )
+                                    ),
                                   ],
                                 )
                               ],

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/components/AppAdvertsBar.dart';
 import 'package:mercadopoupanca/components/bottomAppBar.dart';
+import 'package:mercadopoupanca/pages/cartPage/models/shop.dart';
 import 'package:mercadopoupanca/pages/homePage/models/post.dart';
 import 'package:mercadopoupanca/pages/homePage/services/remote_services.dart';
 
@@ -82,10 +83,10 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
       Timer.periodic(const Duration(seconds: 1), (timer) {
         switch(_localStorage.get('searchStatus')){
           case false:
-            getData('http://192.168.180.23:8080/product?type=all', null);
+            getData('${_localStorage.get('urlApi')}/product?type=all', null);
             _localStorage.put('searchStatus', null);
           case true:
-            getData('http://192.168.180.23:8080/product?type=name', _localStorage.get('search'));
+            getData('${_localStorage.get('urlApi')}/product?type=name', _localStorage.get('search'));
             _localStorage.put('searchStatus', null);
           case 'cancel':
             timer.cancel();
@@ -118,7 +119,7 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
                   crossAxisCount: 2, // number of items in each row
                   mainAxisSpacing: screenheight * 0.01, // spacing between rows
                   crossAxisSpacing: screenWidth * 0.05, // spacing between columns
-                  childAspectRatio: (0.88),
+                  childAspectRatio: (0.78),
                 ),
                 padding: EdgeInsets.fromLTRB(screenWidth * 0.03, 0, screenWidth * 0.03, 0),
                 itemCount: oldPost?.length,
@@ -138,10 +139,13 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
                               onTap: () {
                                 Navigator.of(context).pushNamed('/product', arguments: oldPost![index].barcode.toString());
                               },
-                              child: Image.network('${oldPost?[index].image}',
-                                height: screenheight * 0.13,
-                                width: screenWidth * 0.40
-                                ),
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(0, screenheight * 0.01, 0, screenheight * 0.01),
+                                child: Image.network('${oldPost?[index].image}',
+                                  height: screenheight * 0.13,
+                                  width: screenWidth * 0.40
+                                  ),
+                              )
                             ),
                           
                             Container(
@@ -167,30 +171,30 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
                                         fontSize: (screenWidth / screenheight) * 40
                                         ),
                                       ),
-                                    Stack(
-                                      children: [
-                                        Visibility(
-                                          visible: (oldPost![index].market[0].promo > 0),
-                                          child: Text(
-                                            '${((oldPost?[index].market[0].price)! + (oldPost![index].market[0].price * (oldPost![index].market[0].promo / 100))).toStringAsFixed(2)}€',
+                                    Visibility(
+                                      visible: (oldPost![index].market[0].promo > 0),
+                                      child: Stack(
+                                        children: [
+                                          Text(
+                                              '${((oldPost?[index].market[0].price)! + (oldPost![index].market[0].price * (oldPost![index].market[0].promo / 100))).toStringAsFixed(2)}€',
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: (screenWidth / screenheight) * 25
+                                                ),
+                                              ),
+                                            Positioned(
+                                            bottom: screenheight * 0.005,
+                                            child: Text(
+                                            '_______',
                                             style: TextStyle(
                                               color: Colors.grey,
                                               fontSize: (screenWidth / screenheight) * 25
                                               ),
                                             ),
                                           ),
-                                          Positioned(
-                                          bottom: screenheight * 0.005,
-                                          child: Text(
-                                          '_______',
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: (screenWidth / screenheight) * 25
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
+                                        ],
+                                      )
+                                    ),
                                   ],
                                 )
                               ],
@@ -256,14 +260,86 @@ class _AppBuilderContainer extends State<AppBuilderContainer>{
                                     GestureDetector(
                                       onTap: () {
                                         if(_localStorage.get('shop') == null){
-                                          _localStorage.put('shop', []);
-                                        }
-                                        // ignore: no_leading_underscores_for_local_identifiers
+                                          List<Shop> cart = [];
 
-                                        List<dynamic> array = _localStorage.get('shop');
-                                        array.add({"product": oldPost![index].barcode, "store": oldPost![index].market[0].name});
-                                        _localStorage.put('shop', array);
-                                        //Navigator.of(context).pushNamed('/product', arguments: null);
+                                          cart.add(
+                                                Shop(
+                                                  image: oldPost![index].image, 
+                                                  product: oldPost![index].barcode, 
+                                                  name: oldPost![index].name,
+                                                  store: oldPost![index].market[0].name, 
+                                                  storeImg: oldPost![index].market[0].image, 
+                                                  price: oldPost![index].market[0].price, 
+                                                  promo: oldPost![index].market[0].promo,
+                                                  amount: 1
+                                                )
+                                              );
+
+                                          final resultShop = shopToJson(cart);
+                                          _localStorage.put('shop', resultShop);
+                                        } else {
+                                          int count = 0;
+                                          bool foundItem = false;
+                                          List<Shop> cart = shopFromJson(_localStorage.get('shop'));
+                                          List<Shop> newCart = [];
+                                          
+                                          for (var element in cart) {
+                                            if(element.product == oldPost?[index].barcode && element.store == oldPost?[index].market[0].name){
+                                              setState(() {
+                                                foundItem = true;
+                                              });
+                                              newCart.add(
+                                                Shop(
+                                                  image: oldPost![index].image, 
+                                                  product: oldPost![index].barcode,
+                                                  name: oldPost![index].name,
+                                                  store: oldPost![index].market[0].name, 
+                                                  storeImg: oldPost![index].market[0].image, 
+                                                  price: oldPost![index].market[0].price, 
+                                                  promo: oldPost![index].market[0].promo,
+                                                  amount: element.amount + 1
+                                                )
+                                              );
+                                            } else {
+                                              if(cart.length >= 1){
+                                                newCart.add(
+                                                  Shop(
+                                                    image: element.image, 
+                                                    product: element.product,
+                                                    name: element.name, 
+                                                    store: element.store, 
+                                                    storeImg: element.storeImg, 
+                                                    price: element.price, 
+                                                    promo: element.promo,
+                                                    amount: element.amount
+                                                  )
+                                                );
+                                              }
+                                            }
+                                            setState(() {
+                                              count++;
+                                            });
+                                            if(count == cart.length){
+                                              if(foundItem == false){
+                                                newCart.add(
+                                                  Shop(
+                                                    image: oldPost![index].image, 
+                                                    product: oldPost![index].barcode,
+                                                    name: oldPost![index].name,
+                                                    store: oldPost![index].market[0].name, 
+                                                    storeImg: oldPost![index].market[0].image, 
+                                                    price: oldPost![index].market[0].price, 
+                                                    promo: oldPost![index].market[0].promo,
+                                                    amount: 1
+                                                  )
+                                                );
+                                              }
+
+                                              final resultShop = shopToJson(newCart);
+                                              _localStorage.put('shop', resultShop);
+                                            }
+                                          }
+                                        }
                                       },
                                       child: const Icon(Icons.shopping_basket, color: Colors.black,)
                                     ),

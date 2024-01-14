@@ -316,8 +316,8 @@ class _filterPage extends State<filterPage> {
                                   ),
                                 ),
                               
-                                Image.network('https://firebasestorage.googleapis.com/v0/b/mercadopoupanca-2aac2.appspot.com/o/stores%2Fmercadona.png?alt=media&token=8312a14c-a01c-46dd-883c-cb1175c776c9',
-                                  width: screenWidth * 0.4,
+                                Image.network('https://firebasestorage.googleapis.com/v0/b/mercadopoupanca-2aac2.appspot.com/o/stores%2Faldi.png?alt=media&token=53e982d8-1f1a-48f0-98ee-11138b967b74',
+                                  width: screenWidth * 0.2,
                                   height: screenheight * 0.04,)
                               ],
                             ),
@@ -370,12 +370,9 @@ class _filterPage extends State<filterPage> {
                                   ),
                                 ),
                               
-                                const Text(
-                                  'Lidl',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  )
+                                Image.network('https://firebasestorage.googleapis.com/v0/b/mercadopoupanca-2aac2.appspot.com/o/stores%2Flidl.png?alt=media&token=6285ae8c-dae9-438b-af27-a4802c47afc1',
+                                  width: screenWidth * 0.2,
+                                  height: screenheight * 0.04,)
                               ],
                             ),
                           ),
@@ -427,12 +424,9 @@ class _filterPage extends State<filterPage> {
                                   ),
                                 ),
                               
-                                const Text(
-                                  'Continente',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  )
+                                Image.network('https://firebasestorage.googleapis.com/v0/b/mercadopoupanca-2aac2.appspot.com/o/stores%2Fcontinente.png?alt=media&token=dd4115f8-f87b-4279-92f9-af59030bdc5e',
+                                  width: screenWidth * 0.4,
+                                  height: screenheight * 0.04,)
                               ],
                             ),
                           ),
@@ -484,12 +478,9 @@ class _filterPage extends State<filterPage> {
                                   ),
                                 ),
                               
-                                const Text(
-                                  'Pingo Doce',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  )
+                                Image.network('https://firebasestorage.googleapis.com/v0/b/mercadopoupanca-2aac2.appspot.com/o/stores%2Fpingo%20doce.png?alt=media&token=8afba80c-a6af-4dcb-8cf4-b8d205ced295',
+                                  width: screenWidth * 0.4,
+                                  height: screenheight * 0.04,)
                               ],
                             ),
                           ),

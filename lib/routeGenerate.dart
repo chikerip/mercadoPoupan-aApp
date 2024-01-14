@@ -1,7 +1,10 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:mercadopoupanca/pages/accountPage/accountPage.dart';
+import 'package:mercadopoupanca/pages/addPricePage/addPricePage.dart';
+import 'package:mercadopoupanca/pages/addProductPage/addProductPage.dart';
 import 'package:mercadopoupanca/pages/barcodeScanPage/barcodeScanPage.dart';
+import 'package:mercadopoupanca/pages/cartPage/cartPage.dart';
 import 'package:mercadopoupanca/pages/catalogPage/catalogPage.dart';
 import 'package:mercadopoupanca/pages/filterPage/filterPage.dart';
 import 'package:mercadopoupanca/pages/homePage/homePage.dart';
@@ -37,9 +40,26 @@ class RouteGenerator {
           return _errorRoute();
         }
       
+      case '/addProduct':
+      if(args is String){
+        return MaterialPageRoute(builder: (_) => addProductPage(data: args.toString()));
+      } else {
+        return _errorRoute();
+      }
+
+      case '/addPrice':
+      if(args is List){
+        return MaterialPageRoute(builder: (_) => addPricePage(data: args));
+      } else {
+        return _errorRoute();
+      }
+
       case '/catalog':
         return MaterialPageRoute(builder: (_)=> const catalogPage());
       
+      case '/cart':
+        return MaterialPageRoute(builder: (_)=> const cartPage());
+
       case '/register':
         return MaterialPageRoute(builder: (_)=> const registerPage());
       

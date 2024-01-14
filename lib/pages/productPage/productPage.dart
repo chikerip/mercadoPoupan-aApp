@@ -1,4 +1,6 @@
 // ignore_for_file: file_names, camel_case_types, unnecessary_cast
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/components/AppAdvertsBar.dart';
@@ -19,15 +21,34 @@ class _productsPage extends State<productsPage> {
   final _localStorage = Hive.box('localStorage');
   List<Post>? posts;
   List<Post>? oldPost;
+  List<dynamic> array = [];
   bool isLoaded = false;
+  bool newProduct = false;
 
-  void getData(productRef) async{
-    posts = await RemoteServices().getPosts('http://192.168.180.23:8080/product?type=barcode', {"productRef": productRef});
+  @override
+  void initState(){
+    super.initState();
+
+    Timer.periodic(const Duration(seconds: 5), (timer) {
+        if(isLoaded == false){
+          setState(() {
+            newProduct = true;
+          });
+          timer.cancel();
+        }
+    });
+  }
+
+  getData(productRef) async{
+    posts = await RemoteServices().getPosts('${_localStorage.get('urlApi')}/product?type=barcode', {"productRef": productRef});
 
       if(posts != null){
         setState(() {
           oldPost = posts;
           isLoaded = true;
+          array.add(posts![0].barcode);
+          array.add(posts![0].name);
+          array.add(posts![0].image);
         });
       }
   }
@@ -61,7 +82,13 @@ class _productsPage extends State<productsPage> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            if(_localStorage.get('backProduct') == true){
+                              _localStorage.put('backProduct', null);
+                              _localStorage.put('searchStatus', 'cancel');
+                              Navigator.of(context).pushReplacementNamed('/');
+                            } else {
+                              Navigator.pop(context);
+                            }
                           }, 
                           icon: Icon(Icons.arrow_back_ios)
                         ),
@@ -77,10 +104,10 @@ class _productsPage extends State<productsPage> {
                           width: screenWidth * 0.1,
                           height: screenheight * 0.1,
                           child: Visibility(
-                            visible: (_localStorage.get('admin') == 1),
+                            visible: (_localStorage.get('admin') == 1 && isLoaded == true),
                             child: IconButton(
                               onPressed: () => {
-                                Navigator.of(context).pushNamed('/')
+                                Navigator.of(context).pushReplacementNamed('/addPrice', arguments: array),
                               }, 
                               icon: Icon(Icons.add)
                             ),
@@ -91,8 +118,34 @@ class _productsPage extends State<productsPage> {
                   ),
   
                   Visibility(
-                    replacement: const Center(child: CircularProgressIndicator(),),
                     visible: isLoaded,
+                    replacement: Visibility(
+                      visible: (newProduct),
+                      replacement: const Center(child: CircularProgressIndicator(),),
+                      child: Visibility(
+                        visible: (_localStorage.get('admin') == 1),
+                        replacement: Container(
+                          alignment: Alignment.center,
+                          height: screenheight * 0.8,
+                          width: screenWidth,
+                          child: const Column(
+                              children: [
+                                Icon(Icons.close,color: Colors.black,),
+                                Text("O produto não foi achado",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold
+                                ),)
+                              ],
+                            )
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pushReplacementNamed('/addProduct', arguments: widget.data);
+                          },
+                          child: const Center(child: Icon(Icons.add, color: Colors.black,),),
+                        )
+                      ),
+                    ),
                     child: Stack(
                       children: [
                         Container(
@@ -198,7 +251,7 @@ class _productsPage extends State<productsPage> {
                         )
                       ],
                     ),
-                
+                    
                   ),
                 ],
               )

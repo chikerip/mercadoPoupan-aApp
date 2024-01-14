@@ -20,7 +20,7 @@ class _loginPage extends State<loginPage> {
   bool send = false;
 
   getData(body)async{
-    posts = await RemoteServicesLogin().getPosts('http://192.168.180.23:8080/user?type=login', body);
+    posts = await RemoteServicesLogin().getPosts('${_localStorage.get('urlApi')}/user?type=login', body);
       
 
     if(posts != null){
@@ -48,6 +48,7 @@ class _loginPage extends State<loginPage> {
 
     return Scaffold(
       body: SafeArea(
+        top: false,
         child: Column(
           children: [
             const AppAdvertsBar(),

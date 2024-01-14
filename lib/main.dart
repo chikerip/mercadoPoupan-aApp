@@ -16,6 +16,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final _localStorage = Hive.box('localStorage');
+  _localStorage.put('urlApi', 'http://192.168.1.215:8080');
+  //_localStorage.put('shop', null);
 
   runApp(const MyApp());
   FlutterNativeSplash.remove();

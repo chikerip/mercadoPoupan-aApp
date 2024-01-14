@@ -1,5 +1,6 @@
 // ignore_for_file: file_names, camel_case_types, unnecessary_cast
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/components/AppAdvertsBar.dart';
 import 'package:mercadopoupanca/pages/registerPage/models/post.dart';
 import 'package:mercadopoupanca/pages/registerPage/services/remote_services.dart';
@@ -12,6 +13,7 @@ class registerPage extends StatefulWidget {
 }
 
 class _registerPage extends State<registerPage> {
+  final _localStorage = Hive.box('localStorage');
   List<Post>? posts;
   String username = '';
   String email = '';
@@ -19,13 +21,16 @@ class _registerPage extends State<registerPage> {
   bool send = false;
 
   getData(body)async{
-    posts = await RemoteServicesRegister().getPosts('http://192.168.180.23:8080/user', body);
+    posts = await RemoteServicesRegister().getPosts('${_localStorage.get('urlApi')}/user', body);
       
 
     if(posts != null){
         // ignore: use_build_context_synchronously
         Navigator.of(context).pushNamed('/login');
     } else {
+      setState(() {
+        send = false;
+      });
         // ignore: use_build_context_synchronously
       showDialog(
         context: context,

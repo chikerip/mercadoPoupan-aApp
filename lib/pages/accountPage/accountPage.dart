@@ -80,7 +80,7 @@ class _accountPage extends State<accountPage> {
 
 
   getData(token)async{
-    apiPost = await RemoteServicesAccount().getPosts('http://192.168.180.23:8080/user?type=userInfo', token);
+    apiPost = await RemoteServicesAccount().getPosts('${_localStorage.get('urlApi')}/user?type=userInfo', token);
       
     if(apiPost != null){
         setState(() {
@@ -101,7 +101,7 @@ class _accountPage extends State<accountPage> {
   }
 
   postData(body) async{
-    final result = await RemoteServicesAccount().postData('http://192.168.180.23:8080/user?type=adress', _localStorage.get('token'), body);
+    final result = await RemoteServicesAccount().postData('${_localStorage.get('urlApi')}/user?type=adress', _localStorage.get('token'), body);
   
     if(result != null){
       showDialog(
@@ -125,7 +125,10 @@ class _accountPage extends State<accountPage> {
     double screenheight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: SafeArea(
+      body: Container(
+      color: const Color(0xffD9D9D9),
+      height: screenheight,
+      width: screenWidth,
         child: Stack(
           children: [
             Column(
@@ -141,7 +144,7 @@ class _accountPage extends State<accountPage> {
                         itemBuilder: (context, index){
                           return Container(
                               color: Color(0xffD9D9D9),
-                              height: screenheight * 0.94,
+                              height: screenheight * 0.9,
                               width: screenWidth,
                               child: Container(
                                 alignment: Alignment.topCenter,
@@ -150,14 +153,14 @@ class _accountPage extends State<accountPage> {
 
                                     Container(
                                       width: screenWidth * 0.92,
-                                      height: screenheight * 0.1,
+                                      height: screenheight * 0.05,
                                       color: Color(0xffD9D9D9),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           IconButton(
                                             onPressed: () {
-                                              Navigator.pop(context);
+                                              Navigator.of(context).pushReplacementNamed('/');
                                             }, 
                                             icon: Icon(Icons.arrow_back_ios)
                                           ),
@@ -498,6 +501,7 @@ class _accountPage extends State<accountPage> {
                                           GestureDetector(
                                             onTap: () {
                                               _localStorage.put("token", null);
+                                              _localStorage.put("admin", null);
                                               Navigator.of(context).pushNamed('/');
                                             },
                                             child: Container(

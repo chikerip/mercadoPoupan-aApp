@@ -131,7 +131,7 @@ class _HamburgerMenu extends State<HamburgerMenu> {
                         GestureDetector(
                           onTap: () {
                             _localStorage.put('searchStatus', 'cancel');
-                            Navigator.of(context).pushReplacementNamed('/cart');
+                            Navigator.of(context).pushNamed('/cart');
                           },
                           child: const Icon(
                             Icons.shopping_bag,
