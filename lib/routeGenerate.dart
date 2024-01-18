@@ -6,6 +6,7 @@ import 'package:mercadopoupanca/pages/addProductPage/addProductPage.dart';
 import 'package:mercadopoupanca/pages/barcodeScanPage/barcodeScanPage.dart';
 import 'package:mercadopoupanca/pages/cartPage/cartPage.dart';
 import 'package:mercadopoupanca/pages/catalogPage/catalogPage.dart';
+import 'package:mercadopoupanca/pages/checkoutPage/checkoutPage.dart';
 import 'package:mercadopoupanca/pages/filterPage/filterPage.dart';
 import 'package:mercadopoupanca/pages/homePage/homePage.dart';
 import 'package:mercadopoupanca/pages/loginPage/loginPage.dart';
@@ -59,6 +60,9 @@ class RouteGenerator {
       
       case '/cart':
         return MaterialPageRoute(builder: (_)=> const cartPage());
+
+      case '/checkout':
+        return MaterialPageRoute(builder: (_)=>const checkoutPage());
 
       case '/register':
         return MaterialPageRoute(builder: (_)=> const registerPage());

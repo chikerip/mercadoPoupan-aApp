@@ -34,13 +34,17 @@ class _cartPage extends State<cartPage> {
   }
 
   void getData(data){
+    setState(() {
+      items = 0;
+      totalProducts = 0;
+    });
     int count = 0;
       cart = data;
 
       if(cart!.isNotEmpty){
         for(var element in cart!){
           setState(() {
-            totalProducts += element.price;
+            totalProducts += element.price * element.amount;
             items += element.amount;
             count++;
           });
@@ -232,7 +236,7 @@ class _cartPage extends State<cartPage> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              '${newCart![index].price}€',
+                                              '${newCart![index].price * newCart![index].amount}€',
                                               style: const TextStyle(
                                                 color: Color(0xffF5A636),
                                                 fontWeight: FontWeight.bold,
@@ -244,7 +248,7 @@ class _cartPage extends State<cartPage> {
                                               child: Stack(
                                                 children: [
                                                   Text(
-                                                      '${((newCart![index].price) + (newCart![index].price * (newCart![index].promo / 100))).toStringAsFixed(2)}€',
+                                                      '${(((newCart![index].price) + (newCart![index].price * (newCart![index].promo / 100))) * newCart![index].amount).toStringAsFixed(2)}€',
                                                       style:  const TextStyle(
                                                         color: Colors.grey,
                                                         fontSize: 12
@@ -317,7 +321,7 @@ class _cartPage extends State<cartPage> {
                     GestureDetector(
                       onTap: () {
                         if(_localStorage.get('token') != null){
-
+                          Navigator.of(context).pushNamed('/checkout');
                         } else {
                           showDialog(
                             context: context,
