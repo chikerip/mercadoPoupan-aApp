@@ -3,6 +3,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mercadopoupanca/pages/splashPage/model/adsModel.dart';
 
 class AppAdvertsBar extends StatefulWidget {
   const AppAdvertsBar({super.key});
@@ -12,83 +14,95 @@ class AppAdvertsBar extends StatefulWidget {
 }
 
 class _AppAdvertsBar extends State<AppAdvertsBar> {
-   String img = 'lib/img/NovoProjeto.png';
+  final _localStorage = Hive.box('localStorage');
+  List<Ads>? ads;
+  late Map<int, String> colors;
+  String img = '';
   int i = 0;
-  bool color = true;
   bool imgOpacity = true;
 
   @override
-  void initState () {
-    SystemChrome.setEnabledSystemUIMode (SystemUiMode.manual, overlays: [SystemUiOverlay.bottom]);
+  void initState() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.bottom]);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
-  ]);
+    ]);
+
     super.initState();
+    setState(() {
+      ads = adsFromJson(_localStorage.get('ads'));
+      img = ads![i].image;
+      final split = (ads![i].color).split(',');
+      colors = {for (int i = 0; i < split.length; i++) i: split[i]};
+      i++;
+    });
 
     Timer.periodic(const Duration(seconds: 10), (timer) {
       setState(() {
-        if(i == 0){
+        if (i == ads!.length) {
+          i = 0;
           imgOpacity = !imgOpacity;
-          color = !color;
-          i = i + 1;
+          img = ads![i].image;
+          final split = (ads![i].color).split(',');
+          colors = {for (int i = 0; i < split.length; i++) i: split[i]};
+          i++;
         } else {
           imgOpacity = !imgOpacity;
-          color = !color;
-          i = i - 1;
+          img = ads![i].image;
+          final split = (ads![i].color).split(',');
+          colors = {for (int i = 0; i < split.length; i++) i: split[i]};
+          i++;
         }
       });
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenheight = MediaQuery.of(context).size.height;
     return Row(
-        children: [
-          AnimatedContainer(
-            onEnd: () {
-              setState(() {
-                if(i == 0){
-                  img = 'lib/img/NovoProjeto.png';
-                } else {
-                  img = 'lib/img/sddefault.jpg';
-                }
-                imgOpacity = !imgOpacity;
-              });
-            },
-            duration: const Duration(milliseconds: 500),
+      children: [
+        AnimatedContainer(
+          onEnd: () {
+            setState(() {
+              imgOpacity = !imgOpacity;
+            });
+          },
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
+          color: Color.fromRGBO(int.parse(colors[0]!), int.parse(colors[1]!),
+              int.parse(colors[2]!), 1.0),
+          width: screenWidth,
+          height: screenheight * 0.07,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
-            color: color ? const Color(0xFF508932): Colors.black,
-            width: screenWidth,
-            height: screenheight * 0.07,
-            child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                  opacity:  imgOpacity ? 1.0 : 0.0,
-                  child:  Row(
+            opacity: imgOpacity ? 1.0 : 0.0,
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Image.asset(
-                    img,
-                    width: 150,
-                    height: 50,
+                Image.network(
+                  img,
+                  width: 150,
+                  height: 50,
                 ),
-                 Padding(
+                Padding(
                   padding: EdgeInsets.only(right: screenWidth * 0.05),
                   child: Text(
-                  'Saiba mais',
-                  style: TextStyle(
-                    color: Colors.white, 
-                    fontSize: (screenheight / screenWidth) * 8,
+                    'Saiba mais',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: (screenheight / screenWidth) * 8,
+                    ),
                   ),
                 ),
-                ),
               ],
-            ), 
             ),
           ),
-        ],
+        ),
+      ],
     );
   }
 }

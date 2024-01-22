@@ -1,19 +1,16 @@
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-import 'package:mercadopoupanca/pages/accountPage/models/post.dart';
+import 'package:mercadopoupanca/pages/checkoutPage/models/post.dart';
+import 'package:mercadopoupanca/pages/statusShopPage/model/post.dart';
 
-class RemoteServicesAccount {
-  Future<List<Post>?> getPosts(url, token) async {
-    var headers = {
-      // ignore: unnecessary_brace_in_string_interps
-      'Authorization': 'Bearer ${token}'
-    };
+class RemoteServicesCart {
+  Future<List<Promo>?> getDiscount(url) async {
+    var headers = {'Content-Type': 'application/json'};
     var request = http.Request('GET', Uri.parse(url));
     request.body = '''''';
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
+
     if (response.statusCode == 200) {
       var json = await response.stream.bytesToString();
       return postFromJson(json);
@@ -22,21 +19,19 @@ class RemoteServicesAccount {
     }
   }
 
-  Future postData(url, token, body) async {
+  Future<List<AddCart>?> postCart(url, token, body) async {
     var headers = {
       'Content-Type': 'application/json',
-      // ignore: unnecessary_brace_in_string_interps
-      'Authorization': 'Bearer ${token}'
+      'Authorization': 'Bearer $token'
     };
-    var request = http.Request('PUT', Uri.parse(url));
-    request.body = json.encode(body);
+    var request = http.Request('POST', Uri.parse(url));
+    request.body = body;
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
-
     if (response.statusCode == 200) {
       var json = await response.stream.bytesToString();
-      return json;
+      return addCartFromJson(json);
     } else {
       return null;
     }

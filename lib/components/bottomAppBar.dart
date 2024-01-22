@@ -17,10 +17,11 @@ class _HamburgerMenu extends State<HamburgerMenu> {
   final _localStorage = Hive.box('localStorage');
   bool hamburgerDirection = true;
 
-  void initState(){
+  @override
+  void initState() {
     super.initState();
-    
-    if(_localStorage.get('hamburgerDirection') == null){
+
+    if (_localStorage.get('hamburgerDirection') == null) {
       _localStorage.put('hamburgerDirection', true);
     }
 
@@ -30,41 +31,42 @@ class _HamburgerMenu extends State<HamburgerMenu> {
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenheight = MediaQuery.of(context).size.height;
 
     return Row(
-      mainAxisAlignment: hamburgerDirection ? MainAxisAlignment.start : MainAxisAlignment.end,
+      mainAxisAlignment:
+          hamburgerDirection ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 5, 5),
           child: GestureDetector(
             onTap: () {
               setState(() {
-                if(hamburgerOn == false){
+                if (hamburgerOn == false) {
                   iconsHamburgerOn = !iconsHamburgerOn;
                 }
               });
 
               Timer(const Duration(milliseconds: 100), () {
                 setState(() {
-                  if(hamburgerOn == false){
+                  if (hamburgerOn == false) {
                     hamburgerOn = !hamburgerOn;
                   }
                 });
               });
             },
-            onHorizontalDragEnd:(details) {
+            onHorizontalDragEnd: (details) {
               setState(() {
-                if(hamburgerOn == true){
+                if (hamburgerOn == true) {
                   iconsHamburgerOn = !iconsHamburgerOn;
                 }
               });
 
               Timer(const Duration(milliseconds: 100), () {
                 setState(() {
-                  if(hamburgerOn == true){
+                  if (hamburgerOn == true) {
                     hamburgerOn = !hamburgerOn;
                   }
                 });
@@ -81,25 +83,28 @@ class _HamburgerMenu extends State<HamburgerMenu> {
               height: screenheight * 0.1,
               width: hamburgerOn ? screenWidth * 0.95 : screenWidth * 0.22,
               decoration: BoxDecoration(
-                color: const Color(0xffF5A636),
-                border: Border.all(
                   color: const Color(0xffF5A636),
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(50))
-              ),
+                  border: Border.all(
+                    color: const Color(0xffF5A636),
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(50))),
               child: SafeArea(
                 top: false,
-                  child: Visibility(
+                child: Visibility(
                   visible: hamburgerOn,
                   replacement: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.easeOut,
-                    opacity: iconsHamburgerOn ? 1 : 0,
-                    child: const Icon(
-                      Icons.list,
-                      color: Colors.white,
-                    )
-                  ),
+                      duration: const Duration(milliseconds: 100),
+                      curve: Curves.easeOut,
+                      opacity: iconsHamburgerOn ? 1 : 0,
+                      child: SizedBox(
+                        width: screenWidth * 0.2,
+                        height: screenWidth * 0.2,
+                        child: Image.asset(
+                          'assets/icons/menu.png',
+                          fit: BoxFit.cover,
+                          width: screenWidth * 0.01,
+                        ),
+                      )),
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 100),
                     curve: Curves.easeOut,
@@ -111,49 +116,48 @@ class _HamburgerMenu extends State<HamburgerMenu> {
                           onTap: () {
                             Navigator.of(context).pushReplacementNamed('/');
                           },
-                          child: const Icon(
-                            Icons.home,
+                          child: Icon(
+                            Icons.home_rounded,
                             color: Colors.white,
+                            size: (screenWidth / screenheight) * 100,
                           ),
                         ),
-
                         GestureDetector(
-                          onTap: () {
-                            _localStorage.put('searchStatus', 'cancel');
-                            Navigator.of(context).pushReplacementNamed('/catalog');
-                          },
-                          child: const Icon(
-                            Icons.list,
-                            color: Colors.white,
-                          ),
-                        ),
-
+                            onTap: () {
+                              _localStorage.put('searchStatus', 'cancel');
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/catalog');
+                            },
+                            child: Image.asset(
+                              'assets/icons/file.png',
+                              width: screenWidth * 0.07,
+                            )),
                         GestureDetector(
                           onTap: () {
                             _localStorage.put('searchStatus', 'cancel');
                             Navigator.of(context).pushNamed('/cart');
                           },
-                          child: const Icon(
-                            Icons.shopping_bag,
-                            color: Colors.white,
+                          child: Image.asset(
+                            'assets/icons/bagwhite.png',
+                            width: screenWidth * 0.08,
                           ),
                         ),
-
                         GestureDetector(
                           onTap: () {
                             _localStorage.put('searchStatus', 'cancel');
-                            if(_localStorage.get('token') == null){
+                            if (_localStorage.get('token') == null) {
                               Navigator.of(context).pushNamed('/login');
                             } else {
-                              Navigator.of(context).pushReplacementNamed('/account');
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/account');
                             }
                           },
-                          child: const Icon(
-                            Icons.account_circle,
+                          child: Icon(
+                            Icons.person,
                             color: Colors.white,
+                            size: (screenWidth / screenheight) * 100,
                           ),
                         ),
-
                       ],
                     ),
                   ),
