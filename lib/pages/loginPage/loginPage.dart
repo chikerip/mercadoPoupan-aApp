@@ -18,6 +18,7 @@ class _loginPage extends State<loginPage> {
   String password = '';
   List<Post>? posts;
   bool send = false;
+  bool activatedPassword = false;
 
   getData(body) async {
     posts = await RemoteServicesLogin().getPosts(
@@ -142,9 +143,27 @@ class _loginPage extends State<loginPage> {
                                 ),
                                 width: screenWidth * 0.85,
                                 child: TextField(
-                                  decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: "Password"),
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Password",
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        activatedPassword
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          activatedPassword =
+                                              !activatedPassword;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  obscureText: !activatedPassword,
                                   onChanged: (text) {
                                     setState(() {
                                       password = text;

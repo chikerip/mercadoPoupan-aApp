@@ -17,6 +17,8 @@ class _settingsPage extends State<settingsPage> {
   bool des = false;
   String oldPassword = '';
   String newPassword = '';
+  bool activatedPassword = false;
+  bool activatedPassword2 = false;
 
   @override
   void initState() {
@@ -307,10 +309,27 @@ class _settingsPage extends State<settingsPage> {
                                       ],
                                     ),
                                     child: TextField(
-                                        decoration: const InputDecoration(
+                                        decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: 'Password antiga',
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              // Based on passwordVisible state choose the icon
+                                              activatedPassword
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () {
+                                              // Update the state i.e. toogle the state of passwordVisible variable
+                                              setState(() {
+                                                activatedPassword =
+                                                    !activatedPassword;
+                                              });
+                                            },
+                                          ),
                                         ),
+                                        obscureText: !activatedPassword,
                                         onChanged: (text) {
                                           setState(() {
                                             oldPassword = text;
@@ -339,10 +358,27 @@ class _settingsPage extends State<settingsPage> {
                                       ],
                                     ),
                                     child: TextField(
-                                        decoration: const InputDecoration(
+                                        decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: 'Password nova',
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              // Based on passwordVisible state choose the icon
+                                              activatedPassword2
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () {
+                                              // Update the state i.e. toogle the state of passwordVisible variable
+                                              setState(() {
+                                                activatedPassword2 =
+                                                    !activatedPassword2;
+                                              });
+                                            },
+                                          ),
                                         ),
+                                        obscureText: !activatedPassword2,
                                         onChanged: (text) {
                                           setState(() {
                                             newPassword = text;
