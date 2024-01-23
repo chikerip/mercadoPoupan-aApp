@@ -36,7 +36,7 @@ class _barcodeScan extends State<barcodeScan> {
             for (final barcode in barcodes) {
               if (_localStorage.get('scanned') == false) {
                 _localStorage.put('scanned', true);
-                Navigator.of(context).pushNamed('/product',
+                Navigator.of(context).pushReplacementNamed('/product',
                     arguments: barcode.rawValue!.toString());
               }
             }

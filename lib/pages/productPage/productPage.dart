@@ -184,7 +184,7 @@ class _productsPage extends State<productsPage> {
                         _localStorage.put('searchStatus', 'cancel');
                         Navigator.of(context).pushReplacementNamed('/');
                       } else {
-                        Navigator.pop(context);
+                        Navigator.of(context).pushReplacementNamed('/scan');
                         _localStorage.put('scanned', false);
                       }
                     },
