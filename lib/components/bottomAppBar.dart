@@ -114,6 +114,8 @@ class _HamburgerMenu extends State<HamburgerMenu> {
                       children: [
                         GestureDetector(
                           onTap: () {
+                            _localStorage.put('searchStatus', 0);
+                            _localStorage.put('catalogStatus', 'cancel');
                             Navigator.of(context).pushReplacementNamed('/');
                           },
                           child: Icon(
@@ -125,6 +127,7 @@ class _HamburgerMenu extends State<HamburgerMenu> {
                         GestureDetector(
                             onTap: () {
                               _localStorage.put('searchStatus', 'cancel');
+                              _localStorage.put('catalogStatus', 'cancel');
                               Navigator.of(context)
                                   .pushReplacementNamed('/catalog');
                             },
@@ -135,6 +138,7 @@ class _HamburgerMenu extends State<HamburgerMenu> {
                         GestureDetector(
                           onTap: () {
                             _localStorage.put('searchStatus', 'cancel');
+                            _localStorage.put('catalogStatus', 'cancel');
                             Navigator.of(context).pushNamed('/cart');
                           },
                           child: Image.asset(
@@ -145,6 +149,7 @@ class _HamburgerMenu extends State<HamburgerMenu> {
                         GestureDetector(
                           onTap: () {
                             _localStorage.put('searchStatus', 'cancel');
+                            _localStorage.put('catalogStatus', 'cancel');
                             if (_localStorage.get('token') == null) {
                               Navigator.of(context).pushNamed('/login');
                             } else {
