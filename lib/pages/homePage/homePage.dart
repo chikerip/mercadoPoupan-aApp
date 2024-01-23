@@ -70,6 +70,7 @@ class _AppBuilderContainer extends State<AppBuilderContainer> {
   final _localStorage = Hive.box('localStorage');
   List<Post>? posts;
   List<Post>? oldPost;
+  bool loaded = false;
   bool contentLoaded = false;
 
   @override
@@ -91,6 +92,13 @@ class _AppBuilderContainer extends State<AppBuilderContainer> {
           _localStorage.put('searchStatus', null);
         case 'cancel':
           timer.cancel();
+        default:
+          if (loaded == false) {
+            setState(() {
+              loaded = true;
+            });
+            getData('https://mercadopoupanca.azurewebsites.net/product', null);
+          }
       }
     });
   }

@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, camel_case_types, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/pages/splashPage/service/post.dart';
 
 class splashPage extends StatefulWidget {
@@ -11,6 +12,7 @@ class splashPage extends StatefulWidget {
 }
 
 class _splashPage extends State<splashPage> {
+  final _localStorage = Hive.box('localStorage');
   bool withOutConnection = false;
   @override
   void initState() {
@@ -26,8 +28,10 @@ class _splashPage extends State<splashPage> {
       var getClient = await RemoteServicesSplash().getUserStatus();
 
       if (getClient == true) {
+        _localStorage.put('searchStatus', 0);
         Navigator.of(context).pushReplacementNamed('/');
       } else if (getClient == 'Logout') {
+        _localStorage.put('searchStatus', 0);
         Navigator.of(context).pushReplacementNamed('/');
         showDialog(
             context: context,
