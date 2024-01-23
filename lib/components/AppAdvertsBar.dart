@@ -1,10 +1,11 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, no_leading_underscores_for_local_identifiers
 
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercadopoupanca/pages/splashPage/model/adsModel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppAdvertsBar extends StatefulWidget {
   const AppAdvertsBar({super.key});
@@ -15,6 +16,7 @@ class AppAdvertsBar extends StatefulWidget {
 
 class _AppAdvertsBar extends State<AppAdvertsBar> {
   final _localStorage = Hive.box('localStorage');
+  String url = '';
   List<Ads>? ads;
   late Map<int, String> colors;
   String img = '';
@@ -44,18 +46,27 @@ class _AppAdvertsBar extends State<AppAdvertsBar> {
           i = 0;
           imgOpacity = !imgOpacity;
           img = ads![i].image;
+          url = ads![i].link;
           final split = (ads![i].color).split(',');
           colors = {for (int i = 0; i < split.length; i++) i: split[i]};
           i++;
         } else {
           imgOpacity = !imgOpacity;
           img = ads![i].image;
+          url = ads![i].link;
           final split = (ads![i].color).split(',');
           colors = {for (int i = 0; i < split.length; i++) i: split[i]};
           i++;
         }
       });
     });
+  }
+
+  Future<void> _launchUrl() async {
+    final Uri _url = Uri.parse(url);
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
   }
 
   @override
@@ -89,15 +100,19 @@ class _AppAdvertsBar extends State<AppAdvertsBar> {
                   height: 50,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(right: screenWidth * 0.05),
-                  child: Text(
-                    'Saiba mais',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: (screenheight / screenWidth) * 8,
-                    ),
-                  ),
-                ),
+                    padding: EdgeInsets.only(right: screenWidth * 0.05),
+                    child: GestureDetector(
+                      onTap: () {
+                        _launchUrl();
+                      },
+                      child: Text(
+                        'Saiba mais',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: (screenheight / screenWidth) * 8,
+                        ),
+                      ),
+                    )),
               ],
             ),
           ),
